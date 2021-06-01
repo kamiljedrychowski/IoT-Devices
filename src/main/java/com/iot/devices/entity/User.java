@@ -7,7 +7,7 @@ import javax.persistence.*;
 
 
 @Entity
-@Table(name = "user")
+@Table(name = "user", schema = "iot")
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Builder

@@ -1,23 +1,20 @@
-package com.iot.devices.entity.mongo;
+package com.iot.devices.entity.kafka;
+
 
 import com.iot.devices.enums.DeviceCommand;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Document(collection = "device_response")
 @Data
-@Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class DeviceResponse {
-
-    private LocalDateTime timestamp;
+@NoArgsConstructor
+@Builder
+public class DeviceCommandResponse {
+    private Long timestamp;
     private UUID deviceUuid;
     private UUID commandUuid;
     private DeviceCommand command;
