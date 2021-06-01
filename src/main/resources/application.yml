@@ -1,0 +1,29 @@
+server:
+  port: 8765
+
+spring:
+
+  jpa:
+    database: POSTGRESQL
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+  datasource:
+    url: jdbc:postgresql://localhost:5421/iot?currentSchema=iot
+    username: postgres
+    password: postgres
+    driverClassName: org.postgresql.Driver
+  sql:
+    init:
+      platform: postgres
+
+  data:
+    mongodb:
+      database: admin
+      username: root
+      password: example
+      port: 27777
+      host: localhost
+
+  # TODO dodać konfigurację kafkową według nowszego schematu!!!
+

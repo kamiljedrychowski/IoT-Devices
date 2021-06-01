@@ -1,0 +1,156 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2021-06-01-23-00
+      author: kjedrychowski
+      comment: sequence for ids in all tables
+      changes:
+        - createSequence:
+            cycle: true
+            incrementBy: 1
+            minValue: 1
+            sequenceName: hibernate_sequence
+            startValue: 1
+  - changeSet:
+      id: 2021-06-01-23-30
+      author: kjedrychowski
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_user_id
+                    unique: true
+                    defaultValueSequenceNext: hibernate_sequence
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: creation_time
+                  type: TIMESTAMP
+              - column:
+                  constraints:
+                    nullable: false
+                  name: modification_time
+                  type: TIMESTAMP
+              - column:
+                  constraints:
+                    nullable: false
+                  name: name
+                  type: VARCHAR(250)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: surname
+                  type: VARCHAR(250)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: login
+                  type: VARCHAR(250)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: password
+                  type: VARCHAR(250)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: role
+                  type: VARCHAR(64)
+            tableName: user
+
+  - changeSet:
+      id: 2021-06-01-23-45
+      author: kjedrychowski
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_device_id
+                    unique: true
+                    defaultValueSequenceNext: hibernate_sequence
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: creation_time
+                  type: TIMESTAMP
+              - column:
+                  constraints:
+                    nullable: false
+                  name: modification_time
+                  type: TIMESTAMP
+              - column:
+                  constraints:
+                    nullable: false
+                  name: uuid
+                  type: VARCHAR(64)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: name
+                  type: VARCHAR(250)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: type
+                  type: VARCHAR(250)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: owner_id
+                  type: BIGINT
+            tableName: device
+  - changeSet:
+      id: 2021-06-02-00-00
+      author: kjedrychowski
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_device_status_id
+                    unique: true
+                    defaultValueSequenceNext: hibernate_sequence
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: creation_time
+                  type: TIMESTAMP
+              - column:
+                  constraints:
+                    nullable: false
+                  name: modification_time
+                  type: TIMESTAMP
+              - column:
+                  constraints:
+                    nullable: false
+                  name: device_id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: start_time
+                  type: TIMESTAMP
+              - column:
+                  constraints:
+                    nullable: false
+                  name: end_time
+                  type: TIMESTAMP
+              - column:
+                  constraints:
+                    nullable: false
+                  name: status
+                  type: VARCHAR(64)
+            tableName: device_status
