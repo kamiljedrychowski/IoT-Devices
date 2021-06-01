@@ -48,6 +48,7 @@ databaseChangeLog:
               - column:
                   constraints:
                     nullable: false
+                    unique: true
                   name: login
                   type: VARCHAR(250)
               - column:
@@ -105,6 +106,8 @@ databaseChangeLog:
               - column:
                   constraints:
                     nullable: false
+                    foreignKeyName: fk_owner_id
+                    references: user(id)
                   name: owner_id
                   type: BIGINT
             tableName: device
@@ -136,6 +139,8 @@ databaseChangeLog:
               - column:
                   constraints:
                     nullable: false
+                    foreignKeyName: fk_device_id
+                    references: device(id)
                   name: device_id
                   type: BIGINT
               - column:
