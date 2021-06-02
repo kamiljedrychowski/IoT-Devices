@@ -1,0 +1,14 @@
+kafka-topics.sh --list --zookeeper zookeeper:2181
+
+kafka-console-producer.sh --topic device-response --bootstrap-server localhost:9092
+kafka-console-producer.sh --topic device-command --bootstrap-server localhost:9092
+
+
+
+kafka-console-consumer.sh --topic device-response --from-beginning --bootstrap-server localhost:9092
+kafka-console-consumer.sh --topic device-command --from-beginning --bootstrap-server localhost:9092
+
+
+kafka-topics.sh --zookeeper zookeeper:2181 --alter --topic device-response --config retention.ms=1000
+kafka-topics.sh --zookeeper zookeeper:2181 --alter --topic device-response --config retention.ms=604800000
+kafka-topics.sh --zookeeper zookeeper:2181 --describe --topics-with-overrides

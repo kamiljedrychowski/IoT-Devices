@@ -2,7 +2,25 @@ server:
   port: 8765
 
 spring:
-
+  cloud:
+    function:
+      definition: consumeDeviceResponse;produceDeviceCommandMessage
+    stream:
+      function:
+        definition: consumeDeviceResponse;produceDeviceCommandMessage
+      kafka:
+        binder:
+          brokers: localhost:9092
+        streams:
+          binder:
+            application-id: iot
+            brokers: csdev.krakow.comarch:9092
+            deserialization-exception-handler: logandcontinue
+      bindings:
+        consumeDeviceResponse-in-0:
+          destination: device-response
+        produceDeviceCommandMessage-out-0:
+          destination: device-command
   jpa:
     database: POSTGRESQL
     show-sql: true
@@ -25,5 +43,5 @@ spring:
       port: 27777
       host: localhost
 
-  # TODO dodać konfigurację kafkową według nowszego schematu!!!
-
+deviceMessageProducer:
+  queueSize: 1000

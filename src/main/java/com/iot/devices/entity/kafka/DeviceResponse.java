@@ -13,7 +13,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class DeviceCommandResponse {
+public class DeviceResponse {
     private Long timestamp;
     private UUID deviceUuid;
     private UUID commandUuid;
