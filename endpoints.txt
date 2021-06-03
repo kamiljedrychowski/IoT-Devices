@@ -1,0 +1,214 @@
+- logowanie/rejestracja
+- w zależności od tego jaki typ użytkownika takie zakładki np w navbarze
+- możliwość akcji do np. urządzeń i automatyczna aktualizacja listy bez przeładowania strony
+- wylogowywanie
+
+(autoryzacja działa, bez autoryzacji może być rejestracja oczywiście)
+(nie do końca jeszcze działą sprawdzanie czy dany użytkownik ma dostęp do danego endpointa
+ale na froncie i tak jest to oddzielnie obsługiwane)
+
+USERS
+
+- pobranie roli użytkownika (do wykonania jako pierwsze przy logowaniu)
+    GET 89.69.46.102:8765/user/role
+    Możliwe odpowiedzi:
+    ADMIN, MANAGER, USER
+
+- rejestracja użytkownika (jako użytkownik USER)
+    POST 89.69.46.102:8765/user/register
+    jako body:
+        {
+            "login": "login",
+            "password":"password",
+            "name":"name",
+            "surname":"surname"
+        }
+    Odpowiedź:
+        {
+            "id": 9,
+            "name": "name",
+            "surname": "surname",
+            "login": "login",
+            "role": "USER"
+        }
+
+- pobieranie wszystkich użytkowników
+    !tylko ADMIN, MANAGER
+    GET 89.69.46.102:8765/user
+    Odpowiedź:
+        [
+            {
+                "id": -1,
+                "name": "kamil",
+                "surname": "kkk",
+                "login": "kamil",
+                "password": null,
+                "role": "ADMIN"
+            },
+            {
+                "id": -2,
+                "name": "user",
+                "surname": "user",
+                "login": "user",
+                "password": null,
+                "role": "USER"
+            }
+        ]
+
+- usuwanie użytkownika
+    !tylko ADMIN, MANAGER
+    DELETE 89.69.46.102:8765/user/{id}
+
+- aktualizacja użytkownika
+    POST 89.69.46.102:8765/user/{id}
+    jako body wystarczy jeden z poniższych elementów ten co ma zostać zaktualizowany:
+            {
+                "login": "aaa",
+                "password":"password",
+                "name":"name",
+                "surname":"surname"
+            }
+        Odpowiedź:
+            {
+                "id": 9,
+                "name": "name",
+                "surname": "surname",
+                "login": "aaa",
+                "role": "USER"
+            }
+
+
+
+DEVICE
+
+- pobieranie listy urządzeń - dla USER zwróci tylko te, których jest właścicielem, dla ADMINAi MANAGER wszystkie
+    GET 89.69.46.102:8765/device
+    odpowiedź:
+        [
+            {
+                "id": 4,
+                "uuid": "4d308664-a6d5-478f-a98c-e10f07de10b0",
+                "name": "termometr",
+                "type": "THERMOMETER",
+                "status": "OFF",
+                "ownerLogin": "kamil"
+            }
+        ]
+
+- zmiana statusu urządzenia
+    POST 89.69.46.102:8765/device/status/{deviceId}/{deviceStatus}
+    Możliwe deviceStatus do wysłania: ON, OFF, ERROR
+    np: 89.69.46.102:8765/device/status/4/OFF
+    odpowiedź:
+        {
+            "id": 4,
+            "uuid": "4d308664-a6d5-478f-a98c-e10f07de10b0",
+            "name": "termometr",
+            "type": "THERMOMETER",
+            "status": "OFF",
+            "ownerLogin": "kamil"
+        }
+
+- dodanie nowego urządzenia
+    !tylko ADMIN, MANAGER
+    POST 89.69.46.102:8765/device
+    Body:
+        {
+            "name":"termometr",
+            "type":"THERMOMETER",
+            "ownerLogin": "kaamil"
+        }
+    ownerLogin musi istnieć
+    Możliwe type: AIR_CONDITIONING, LIGHTS, SMOKE_SENSOR, THERMOMETER, MOTION_DETECTOR
+    odpowiedź:
+        {
+            "id": 11,
+            "uuid": "a86f0576-9ced-4c98-8534-9e63ffba7437",
+            "name": "czujnik dymu",
+            "type": "SMOKE_SENSOR",
+            "status": "OFF",
+            "ownerLogin": "user"
+        }
+
+- usuwanie urządzenia
+    !tylko ADMIN, MANAGER
+    DELETE 89.69.46.102:8765/device/{id}
+
+- aktualizacja urządzenia
+    !tylko ADMIN, MANAGER
+    POST 89.69.46.102:8765/device/{id}
+    body: wystarczy tylko to co trzeba zaktualizować
+        {
+            "name":"dymek",
+            "type":"SMOKE_SENSOR",
+            "ownerLogin": "user"
+        }
+    odpowiedź:
+        {
+            "id": 11,
+            "uuid": "a86f0576-9ced-4c98-8534-9e63ffba7437",
+            "name": "dymek",
+            "type": "SMOKE_SENSOR",
+            "status": "OFF",
+            "ownerLogin": "user"
+        }
+
+
+
+COMMANDS
+- lista 50 najnowszych poleceń dla urządzeń
+    !tylko ADMIN
+    GET 89.69.46.102:8765/commands
+    [
+        {
+            "date": "2021-06-03T04:30:53",
+            "deviceUuid": "4d308664-a6d5-478f-a98c-e10f07de10b0",
+            "commandUuid": "1c3d5994-7d39-4401-be16-f75b4779f7ba",
+            "deviceCommand": "TURN_OFF"
+        },
+        {
+            "date": "2021-06-03T04:30:46",
+            "deviceUuid": "4d308664-a6d5-478f-a98c-e10f07de10b0",
+            "commandUuid": "6f629fdd-9110-4d37-960c-60ac0f9cbbde",
+            "deviceCommand": "ERROR_MESSAGE"
+        }
+    ]
+
+
+
+RESPONSE
+- lista 50 najnowszych odpowiedzi od urządzeń (Przez to że to jest mock to dokładnie odpowiada temu wyżej tylko są stany a nie polecenia)
+    !tylko ADMIN
+    GET 89.69.46.102:8765/response
+    [
+        {
+            "date": "2021-06-03T04:30:53",
+            "deviceUuid": "4d308664-a6d5-478f-a98c-e10f07de10b0",
+            "commandUuid": "1c3d5994-7d39-4401-be16-f75b4779f7ba",
+            "responseStatus": "OFF"
+        },
+        {
+            "date": "2021-06-03T04:30:46",
+            "deviceUuid": "4d308664-a6d5-478f-a98c-e10f07de10b0",
+            "commandUuid": "6f629fdd-9110-4d37-960c-60ac0f9cbbde",
+            "responseStatus": "ERROR"
+        }
+    ]
+
+
+MOŻLIWE WYJĄTKI:
+
+CONFLICT 409 - ObjectAlreadyExistException (np użytkownik z takim loginem)
+NOT_FOUND 404 - ObjectNotFoundException (np do usunięcia lub ownerLogin przy dodawaniu urządzenia)
+INTERNAL_SERVER_ERROR 500 - inne błędy przy zapisywaniu obiektu do bazy lub jakieś inne
+BAD_REQUEST 400 - RequiredDataNotFoundException (Np przy rejestrowaniu lub przy dodawaniu urządzenia jak będzie czegoś brakować)
+UNAUTHORIZED 401 - UnauthorizedAccessException
+FORBIDDEN 403
+
+jeżeli wyjątek jest przewidziany to respons body wygląda tak:
+
+{
+    "status": 404,
+    "errorMessage": "Device with given id does not exist"
+}
+
