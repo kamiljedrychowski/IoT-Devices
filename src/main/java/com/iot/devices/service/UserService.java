@@ -3,6 +3,9 @@ package com.iot.devices.service;
 import com.iot.devices.dto.UserDto;
 import com.iot.devices.entity.User;
 import com.iot.devices.enums.UserRole;
+import com.iot.devices.exceptions.ObjectAlreadyExistException;
+import com.iot.devices.exceptions.ObjectNotFoundException;
+import com.iot.devices.exceptions.RequiredDataNotFoundException;
 import com.iot.devices.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,7 +49,7 @@ public class UserService {
     public void registerUser(UserDto userDto) throws Exception {
         if(!validateUser(userDto)) {
             log.error("UserDto has wrong data: {}", userDto);
-            throw new Exception("UserDto has wrong data");
+            throw new RequiredDataNotFoundException("UserDto has wrong data");
         }
 
         User newUser = User.builder()
@@ -61,7 +64,7 @@ public class UserService {
             userRepository.save(newUser);
         } catch (Exception e) {
             log.error("User with this login already exist");
-            throw new Exception("User with this login already exist");
+            throw new ObjectAlreadyExistException("User with this login already exist");
         }
 
     }
@@ -76,7 +79,7 @@ public class UserService {
             userRepository.deleteById(id);
         } catch (Exception exception) {
             log.error("User with given id: {} does not exist", id);
-            throw new Exception("User with given id does not exist");
+            throw new ObjectNotFoundException("User with given id does not exist");
         }
     }
 }

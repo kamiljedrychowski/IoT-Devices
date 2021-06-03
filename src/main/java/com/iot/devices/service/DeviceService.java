@@ -6,6 +6,10 @@ import com.iot.devices.entity.User;
 import com.iot.devices.entity.kafka.DeviceCommandMessage;
 import com.iot.devices.enums.DeviceStatus;
 import com.iot.devices.enums.UserRole;
+import com.iot.devices.exceptions.ObjectNotFoundException;
+import com.iot.devices.exceptions.ObjectSavingException;
+import com.iot.devices.exceptions.RequiredDataNotFoundException;
+import com.iot.devices.exceptions.UnauthorizedAccessException;
 import com.iot.devices.repository.DeviceRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,14 +42,14 @@ public class DeviceService {
      *
      * @param requestHeader for Authorization header
      * @return List<DeviceDto>
-     * @throws Exception Unauthorized access to getAllDevices
+     * @throws UnauthorizedAccessException Unauthorized access to getAllDevices
      */
-    public List<DeviceDto> getAllDevices(HttpServletRequest requestHeader) throws Exception {
+    public List<DeviceDto> getAllDevices(HttpServletRequest requestHeader) throws UnauthorizedAccessException {
         User user = userService.getUserByAuthorization(requestHeader);
 
         if (user == null) {
             log.error("Unauthorized access to getAllDevices since user does not exist");
-            throw new Exception("Unauthorized access to getAllDevices");
+            throw new UnauthorizedAccessException("Unauthorized access to getAllDevices");
         }
 
         if (UserRole.getPrivilegedRoles().contains(user.getRole())) {
@@ -54,12 +58,12 @@ public class DeviceService {
         return deviceRepository.findAllByOwner(user).stream().map(DeviceDto::fromEntity).collect(Collectors.toList());
     }
 
-    public void changeDeviceStatus(Long deviceId, DeviceStatus newStatus) throws Exception {
+    public void changeDeviceStatus(Long deviceId, DeviceStatus newStatus) throws ObjectNotFoundException {
         try {
             setDeviceStatusAndSendCommand(deviceId, newStatus);
         } catch (EntityNotFoundException exception) {
             log.error("Device with Id: {} does not exist", deviceId);
-            throw new Exception("Device does not exist");
+            throw new ObjectNotFoundException("Device does not exist");
         }
     }
 
@@ -87,7 +91,7 @@ public class DeviceService {
             deviceRepository.save(device);
         } catch (Exception exception) {
             log.error("Exception while saving device");
-            throw new Exception("Exception while saving device");
+            throw new ObjectSavingException("Exception while saving device - owner login probably does not exist");
         }
 
     }
@@ -95,7 +99,7 @@ public class DeviceService {
     private Device createDevice(DeviceDto deviceDto) throws Exception {
         if (!validateDeviceDto(deviceDto)) {
             log.error("DeviceDto has wrong data: {}", deviceDto);
-            throw new Exception("DeviceDto has wrong data");
+            throw new RequiredDataNotFoundException("DeviceDto has wrong data");
         }
         Device device;
         try {
@@ -109,7 +113,7 @@ public class DeviceService {
                     .build();
         } catch (EntityNotFoundException exception) {
             log.error("Owner with this login does not exist");
-            throw new Exception("Owner with this login does not exist");
+            throw new ObjectNotFoundException("Owner with this login does not exist");
         }
         return device;
     }
@@ -124,7 +128,7 @@ public class DeviceService {
             deviceRepository.deleteById(id);
         } catch (Exception exception) {
             log.error("Device with given id: {} does not exist", id);
-            throw new Exception("Device with given id does not exist");
+            throw new ObjectNotFoundException("Device with given id does not exist");
         }
     }
 }
