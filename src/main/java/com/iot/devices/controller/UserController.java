@@ -23,9 +23,9 @@ public class UserController {
     }
 
     @RequestMapping(value = "register", method = RequestMethod.POST)
-    public ResponseEntity<HttpStatus> registerUser(@RequestBody UserDto userDto) throws Exception {
+    public ResponseEntity<UserDto> registerUser(@RequestBody UserDto userDto) throws Exception {
         userService.registerUser(userDto);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(userService.registerUser(userDto));
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -38,4 +38,7 @@ public class UserController {
         userService.deleteUser(id);
         return ResponseEntity.ok().build();
     }
+
+    //todo update usera
+
 }

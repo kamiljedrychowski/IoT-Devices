@@ -43,7 +43,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 //                .anyRequest().authenticated()
 //                .and()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.GET, "/example").hasRole(UserRole.ADMIN.name())
                 .antMatchers(HttpMethod.POST, "/user/register").permitAll()
                 .anyRequest().authenticated()
                 .and()

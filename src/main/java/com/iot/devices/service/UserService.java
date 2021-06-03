@@ -46,7 +46,7 @@ public class UserService {
         return null;
     }
 
-    public void registerUser(UserDto userDto) throws Exception {
+    public UserDto registerUser(UserDto userDto) throws Exception {
         if(!validateUser(userDto)) {
             log.error("UserDto has wrong data: {}", userDto);
             throw new RequiredDataNotFoundException("UserDto has wrong data");
@@ -62,6 +62,7 @@ public class UserService {
 
         try {
             userRepository.save(newUser);
+            return UserDto.fromEntity(newUser);
         } catch (Exception e) {
             log.error("User with this login already exist");
             throw new ObjectAlreadyExistException("User with this login already exist");
@@ -69,7 +70,7 @@ public class UserService {
 
     }
 
-    private boolean validateUser(UserDto userDto) {
+    public boolean validateUser(UserDto userDto) {
         return userDto != null && StringUtils.hasText(userDto.getLogin()) && StringUtils.hasText(userDto.getPassword())
                 && StringUtils.hasText(userDto.getName()) && StringUtils.hasText(userDto.getSurname());
     }

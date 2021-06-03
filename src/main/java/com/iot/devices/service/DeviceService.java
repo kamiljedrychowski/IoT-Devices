@@ -58,25 +58,26 @@ public class DeviceService {
         return deviceRepository.findAllByOwner(user).stream().map(DeviceDto::fromEntity).collect(Collectors.toList());
     }
 
-    public void changeDeviceStatus(Long deviceId, DeviceStatus newStatus) throws ObjectNotFoundException {
+    public DeviceDto changeDeviceStatus(Long deviceId, DeviceStatus newStatus) throws ObjectNotFoundException {
         try {
-            setDeviceStatusAndSendCommand(deviceId, newStatus);
+            return DeviceDto.fromEntity(setDeviceStatusAndSendCommand(deviceId, newStatus));
         } catch (EntityNotFoundException exception) {
             log.error("Device with Id: {} does not exist", deviceId);
             throw new ObjectNotFoundException("Device does not exist");
         }
     }
 
-    private void setDeviceStatusAndSendCommand(Long deviceId, DeviceStatus newStatus) {
+    private Device setDeviceStatusAndSendCommand(Long deviceId, DeviceStatus newStatus) {
         Device device;
         device = deviceRepository.getById(deviceId);
         device.setStatus(newStatus);
         DeviceCommandMessage deviceCommandMessage = prepareCommandMessage(device, newStatus);
         deviceCommandQueue.add(deviceCommandMessage);
         deviceRepository.save(device);
+        return device;
     }
 
-    private DeviceCommandMessage prepareCommandMessage(Device device, DeviceStatus newStatus) {
+    public DeviceCommandMessage prepareCommandMessage(Device device, DeviceStatus newStatus) {
         return DeviceCommandMessage.builder()
                 .timestamp(LocalDateTime.now().toEpochSecond(ZoneOffset.UTC))
                 .deviceUuid(device.getUuid())
@@ -85,15 +86,15 @@ public class DeviceService {
                 .build();
     }
 
-    public void addDevice(DeviceDto deviceDto) throws Exception {
+    public DeviceDto addDevice(DeviceDto deviceDto) throws Exception {
         Device device = createDevice(deviceDto);
         try {
             deviceRepository.save(device);
+            return DeviceDto.fromEntity(device);
         } catch (Exception exception) {
             log.error("Exception while saving device");
             throw new ObjectSavingException("Exception while saving device - owner login probably does not exist");
         }
-
     }
 
     private Device createDevice(DeviceDto deviceDto) throws Exception {
@@ -101,24 +102,24 @@ public class DeviceService {
             log.error("DeviceDto has wrong data: {}", deviceDto);
             throw new RequiredDataNotFoundException("DeviceDto has wrong data");
         }
-        Device device;
-        try {
-            User owner = userService.getUserByLogin(deviceDto.getOwnerLogin());
-            device = Device.builder()
-                    .name(deviceDto.getName())
-                    .type(deviceDto.getType())
-                    .owner(owner)
-                    .uuid(UUID.randomUUID())
-                    .status(DeviceStatus.OFF)
-                    .build();
-        } catch (EntityNotFoundException exception) {
+
+        User owner = userService.getUserByLogin(deviceDto.getOwnerLogin());
+
+        if(owner == null) {
             log.error("Owner with this login does not exist");
             throw new ObjectNotFoundException("Owner with this login does not exist");
         }
-        return device;
+
+        return Device.builder()
+                .name(deviceDto.getName())
+                .type(deviceDto.getType())
+                .owner(owner)
+                .uuid(UUID.randomUUID())
+                .status(DeviceStatus.OFF)
+                .build();
     }
 
-    private boolean validateDeviceDto(DeviceDto deviceDto) {
+    public boolean validateDeviceDto(DeviceDto deviceDto) {
         return deviceDto != null && StringUtils.hasText(deviceDto.getName()) && StringUtils.hasText(deviceDto.getOwnerLogin())
                 && deviceDto.getType() != null;
     }

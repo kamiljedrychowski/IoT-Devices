@@ -1,7 +1,6 @@
 package com.iot.devices.entity.kafka;
 
 import com.iot.devices.enums.DeviceCommand;
-import com.iot.devices.enums.DeviceResponseStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

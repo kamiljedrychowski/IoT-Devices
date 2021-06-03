@@ -27,17 +27,14 @@ public class DeviceController {
     }
 
     @RequestMapping(value = "/status/{deviceId}/{deviceStatus}", method = RequestMethod.POST)
-    public ResponseEntity<HttpStatus> changeDeviceStatus(@PathVariable Long deviceId,
+    public ResponseEntity<DeviceDto> changeDeviceStatus(@PathVariable Long deviceId,
         @PathVariable DeviceStatus deviceStatus) throws ObjectNotFoundException {
-
-        deviceService.changeDeviceStatus(deviceId, deviceStatus);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(deviceService.changeDeviceStatus(deviceId, deviceStatus));
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<HttpStatus> addNewDevice(@RequestBody DeviceDto deviceDto) throws Exception {
-        deviceService.addDevice(deviceDto);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<DeviceDto> addNewDevice(@RequestBody DeviceDto deviceDto) throws Exception {
+        return ResponseEntity.ok(deviceService.addDevice(deviceDto));
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
@@ -45,5 +42,6 @@ public class DeviceController {
         deviceService.deleteDevice(id);
         return ResponseEntity.ok().build();
     }
+    //todo update nazwy urządzenia
 
 }
