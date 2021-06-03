@@ -5,6 +5,7 @@ import com.iot.devices.entity.Device;
 import com.iot.devices.entity.User;
 import com.iot.devices.entity.kafka.DeviceCommandMessage;
 import com.iot.devices.enums.DeviceStatus;
+import com.iot.devices.enums.DeviceType;
 import com.iot.devices.enums.UserRole;
 import com.iot.devices.exceptions.ObjectNotFoundException;
 import com.iot.devices.exceptions.ObjectSavingException;
@@ -68,8 +69,7 @@ public class DeviceService {
     }
 
     private Device setDeviceStatusAndSendCommand(Long deviceId, DeviceStatus newStatus) {
-        Device device;
-        device = deviceRepository.getById(deviceId);
+        Device device = deviceRepository.getById(deviceId);
         device.setStatus(newStatus);
         DeviceCommandMessage deviceCommandMessage = prepareCommandMessage(device, newStatus);
         deviceCommandQueue.add(deviceCommandMessage);
@@ -131,5 +131,37 @@ public class DeviceService {
             log.error("Device with given id: {} does not exist", id);
             throw new ObjectNotFoundException("Device with given id does not exist");
         }
+    }
+
+    public DeviceDto updateDevice(Long id, DeviceDto deviceDto) throws ObjectNotFoundException {
+        try {
+            Device device = deviceRepository.getById(id);
+            boolean mod = false;
+            if(StringUtils.hasText(deviceDto.getName())) {
+                mod = true;
+                device.setName(deviceDto.getName());
+            }
+            if(deviceDto.getType() != null) {
+                mod = true;
+                device.setType(deviceDto.getType());
+            }
+            if(StringUtils.hasText(deviceDto.getOwnerLogin())) {
+                User owner = userService.getUserByLogin(deviceDto.getOwnerLogin());
+                if(owner == null) {
+                    log.error("Owner with this login does not exist");
+                    throw new ObjectNotFoundException("Owner with this login does not exist");
+                }
+                mod = true;
+                device.setOwner(owner);
+            }
+            if(mod) {
+                deviceRepository.save(device);
+            }
+            return DeviceDto.fromEntity(device);
+        } catch (EntityNotFoundException exception) {
+            log.error("Error while updating device");
+            throw new ObjectNotFoundException("Device with given id does not exist");
+        }
+
     }
 }

@@ -1,5 +1,6 @@
 package com.iot.devices.service;
 
+import com.iot.devices.dto.DeviceDto;
 import com.iot.devices.dto.UserDto;
 import com.iot.devices.entity.User;
 import com.iot.devices.enums.UserRole;
@@ -78,6 +79,38 @@ public class UserService {
     public void deleteUser(Long id) throws Exception {
         try{
             userRepository.deleteById(id);
+        } catch (Exception exception) {
+            log.error("User with given id: {} does not exist", id);
+            throw new ObjectNotFoundException("User with given id does not exist");
+        }
+    }
+
+    public UserDto updateUser(Long id, UserDto userDto) throws ObjectNotFoundException {
+        try{
+            User user = userRepository.getById(id);
+            boolean mod = false;
+            if(StringUtils.hasText(userDto.getName())) {
+                mod = true;
+                user.setName(userDto.getName());
+            }
+            if(StringUtils.hasText(userDto.getSurname())){
+                mod = true;
+                user.setSurname(userDto.getSurname());
+            }
+
+            if(StringUtils.hasText(userDto.getLogin())){
+                mod = true;
+                user.setLogin(userDto.getLogin());
+            }
+
+            if(StringUtils.hasText(userDto.getPassword())){
+                mod = true;
+                user.setPassword(userDto.getPassword());
+            }
+            if(mod) {
+                userRepository.save(user);
+            }
+            return UserDto.fromEntity(user);
         } catch (Exception exception) {
             log.error("User with given id: {} does not exist", id);
             throw new ObjectNotFoundException("User with given id does not exist");

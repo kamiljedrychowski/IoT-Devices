@@ -24,7 +24,6 @@ public class UserController {
 
     @RequestMapping(value = "register", method = RequestMethod.POST)
     public ResponseEntity<UserDto> registerUser(@RequestBody UserDto userDto) throws Exception {
-        userService.registerUser(userDto);
         return ResponseEntity.ok(userService.registerUser(userDto));
     }
 
@@ -39,6 +38,9 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    //todo update usera
+    @RequestMapping(value = "/{id}", method = RequestMethod.POST)
+    public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @RequestBody UserDto userDto) throws Exception {
+        return ResponseEntity.ok(userService.updateUser(id, userDto));
+    }
 
 }

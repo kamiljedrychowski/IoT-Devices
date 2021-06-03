@@ -42,6 +42,10 @@ public class DeviceController {
         deviceService.deleteDevice(id);
         return ResponseEntity.ok().build();
     }
-    //todo update nazwy urządzenia
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.POST)
+    public ResponseEntity<DeviceDto> updateDevice(@PathVariable Long id, @RequestBody DeviceDto deviceDto) throws Exception {
+        return ResponseEntity.ok(deviceService.updateDevice(id, deviceDto));
+    }
 
 }
