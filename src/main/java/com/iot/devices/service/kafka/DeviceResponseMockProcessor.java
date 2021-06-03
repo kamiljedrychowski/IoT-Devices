@@ -2,7 +2,6 @@ package com.iot.devices.service.kafka;
 
 import com.iot.devices.entity.kafka.DeviceCommandMessage;
 import com.iot.devices.entity.kafka.DeviceResponseMessage;
-import com.iot.devices.enums.DeviceResponseStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.kstream.KStream;
@@ -29,7 +28,7 @@ public class DeviceResponseMockProcessor {
                 .timestamp(LocalDateTime.now().toEpochSecond(ZoneOffset.UTC))
                 .deviceUuid(command.getDeviceUuid())
                 .commandUuid(command.getCommandUuid())
-                .responseStatus(DeviceResponseStatus.ON)
+                .responseStatus(command.getCommand().getStatus())
                 .build();
     }
 }

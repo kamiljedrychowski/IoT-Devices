@@ -118,4 +118,13 @@ public class DeviceService {
         return deviceDto != null && StringUtils.hasText(deviceDto.getName()) && StringUtils.hasText(deviceDto.getOwnerLogin())
                 && deviceDto.getType() != null;
     }
+
+    public void deleteDevice(Long id) throws Exception {
+        try{
+            deviceRepository.deleteById(id);
+        } catch (Exception exception) {
+            log.error("Device with given id: {} does not exist", id);
+            throw new Exception("Device with given id does not exist");
+        }
+    }
 }

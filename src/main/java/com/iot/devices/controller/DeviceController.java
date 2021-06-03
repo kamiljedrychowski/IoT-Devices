@@ -33,8 +33,14 @@ public class DeviceController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<org.springframework.http.HttpStatus> addNewDevice(DeviceDto deviceDto) throws Exception {
+    public ResponseEntity<HttpStatus> addNewDevice(@RequestBody DeviceDto deviceDto) throws Exception {
         deviceService.addDevice(deviceDto);
+        return ResponseEntity.ok().build();
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<HttpStatus> deleteDevice(@PathVariable Long id) throws Exception {
+        deviceService.deleteDevice(id);
         return ResponseEntity.ok().build();
     }
 

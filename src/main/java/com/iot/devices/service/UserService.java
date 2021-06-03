@@ -11,6 +11,8 @@ import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Base64;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -18,6 +20,10 @@ import java.util.Base64;
 public class UserService {
 
     private final UserRepository userRepository;
+
+    public List<UserDto> getAllUsers() {
+        return userRepository.findAll().stream().map(UserDto::fromEntity).collect(Collectors.toList());
+    }
 
     public User getUserByLogin(String login) {
         return userRepository.getUserByLogin(login);
@@ -63,5 +69,14 @@ public class UserService {
     private boolean validateUser(UserDto userDto) {
         return userDto != null && StringUtils.hasText(userDto.getLogin()) && StringUtils.hasText(userDto.getPassword())
                 && StringUtils.hasText(userDto.getName()) && StringUtils.hasText(userDto.getSurname());
+    }
+
+    public void deleteUser(Long id) throws Exception {
+        try{
+            userRepository.deleteById(id);
+        } catch (Exception exception) {
+            log.error("User with given id: {} does not exist", id);
+            throw new Exception("User with given id does not exist");
+        }
     }
 }

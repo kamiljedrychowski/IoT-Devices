@@ -5,12 +5,10 @@ import com.iot.devices.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @RestController
 @RequestMapping("user")
@@ -30,4 +28,14 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
+    @RequestMapping(method = RequestMethod.GET)
+    public List<UserDto> getAllUsers() {
+        return userService.getAllUsers();
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<HttpStatus> deleteUser(@PathVariable Long id) throws Exception {
+        userService.deleteUser(id);
+        return ResponseEntity.ok().build();
+    }
 }
