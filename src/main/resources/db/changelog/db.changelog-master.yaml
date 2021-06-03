@@ -106,56 +106,13 @@ databaseChangeLog:
               - column:
                   constraints:
                     nullable: false
+                  name: status
+                  type: VARCHAR(64)
+              - column:
+                  constraints:
+                    nullable: false
                     foreignKeyName: fk_owner_id
                     references: user(id)
                   name: owner_id
                   type: BIGINT
             tableName: device
-  - changeSet:
-      id: 2021-06-02-00-00
-      author: kjedrychowski
-      changes:
-        - createTable:
-            columns:
-              - column:
-                  constraints:
-                    nullable: false
-                    primaryKey: true
-                    primaryKeyName: pk_device_status_id
-                    unique: true
-                    defaultValueSequenceNext: hibernate_sequence
-                  name: id
-                  type: BIGINT
-              - column:
-                  constraints:
-                    nullable: false
-                  name: creation_time
-                  type: TIMESTAMP
-              - column:
-                  constraints:
-                    nullable: false
-                  name: modification_time
-                  type: TIMESTAMP
-              - column:
-                  constraints:
-                    nullable: false
-                    foreignKeyName: fk_device_id
-                    references: device(id)
-                  name: device_id
-                  type: BIGINT
-              - column:
-                  constraints:
-                    nullable: false
-                  name: start_time
-                  type: TIMESTAMP
-              - column:
-                  constraints:
-                    nullable: false
-                  name: end_time
-                  type: TIMESTAMP
-              - column:
-                  constraints:
-                    nullable: false
-                  name: status
-                  type: VARCHAR(64)
-            tableName: device_status

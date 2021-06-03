@@ -1,5 +1,6 @@
 package com.iot.devices.entity;
 
+import com.iot.devices.enums.DeviceStatus;
 import com.iot.devices.enums.DeviceType;
 import lombok.*;
 
@@ -24,6 +25,10 @@ public class Device extends BaseEntity {
     @Column(name = "type")
     @Enumerated(EnumType.STRING)
     private DeviceType type;
+
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private DeviceStatus status;
 
     @ManyToOne
     @JoinColumn(name = "owner_id")

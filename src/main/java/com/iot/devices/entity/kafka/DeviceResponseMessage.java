@@ -2,6 +2,7 @@ package com.iot.devices.entity.kafka;
 
 
 import com.iot.devices.enums.DeviceCommand;
+import com.iot.devices.enums.DeviceResponseStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,9 +14,9 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class DeviceResponse {
+public class DeviceResponseMessage {
     private Long timestamp;
     private UUID deviceUuid;
     private UUID commandUuid;
-    private DeviceCommand command;
+    private DeviceResponseStatus responseStatus;
 }

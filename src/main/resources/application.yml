@@ -4,23 +4,28 @@ server:
 spring:
   cloud:
     function:
-      definition: consumeDeviceResponse;produceDeviceCommandMessage
+      definition: consumeDeviceResponse;produceDeviceCommandMessage;processCommand;processCommand
     stream:
       function:
-        definition: consumeDeviceResponse;produceDeviceCommandMessage
+        definition: consumeDeviceResponse;produceDeviceCommandMessage;processCommand;processCommand
       kafka:
         binder:
           brokers: localhost:9092
         streams:
           binder:
             application-id: iot
-            brokers: csdev.krakow.comarch:9092
+            brokers: localhost:9092
             deserialization-exception-handler: logandcontinue
       bindings:
         consumeDeviceResponse-in-0:
           destination: device-response
         produceDeviceCommandMessage-out-0:
           destination: device-command
+        processCommand-in-0:
+          destination: device-command
+        processCommand-out-0:
+          destination: device-response
+
   jpa:
     database: POSTGRESQL
     show-sql: true

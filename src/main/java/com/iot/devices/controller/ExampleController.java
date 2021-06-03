@@ -22,14 +22,14 @@ public class ExampleController {
 
     @GetMapping
     public String exampleMethod() {
-        DeviceCommandMessage deviceCommandMessage = DeviceCommandMessage.builder()
-                .commandUuid(UUID.randomUUID())
-                .deviceUuid(UUID.randomUUID())
-                .responseStatus(DeviceResponseStatus.ON)
-                .timestamp(LocalDateTime.now().toEpochSecond(ZoneOffset.UTC))
-                .build();
+//        DeviceCommandMessage deviceCommandMessage = DeviceCommandMessage.builder()
+//                .commandUuid(UUID.randomUUID())
+//                .deviceUuid(UUID.randomUUID())
+//                .responseStatus(DeviceResponseStatus.ON)
+//                .timestamp(LocalDateTime.now().toEpochSecond(ZoneOffset.UTC))
+//                .build();
 
-        deviceCommandQueue.add(deviceCommandMessage);
+//        deviceCommandQueue.add(deviceCommandMessage);
 
         return "qwertyuiop";
     }
