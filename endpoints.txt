@@ -78,26 +78,6 @@ USERS
             }
 
 
-- aktualizacja użytkownika siebie
-    POST 89.69.46.102:8765/user/self
-    jako body wystarczy jeden z poniższych elementów ten co ma zostać zaktualizowany:
-            {
-                "login": "aaa",
-                "password":"password",
-                "name":"name",
-                "surname":"surname"
-            }
-        Odpowiedź:
-            {
-                "id": 9,
-                "name": "name",
-                "surname": "surname",
-                "login": "aaa",
-                "role": "USER"
-            }
-
-
-
 DEVICE
 
 - pobieranie listy urządzeń - dla USER zwróci tylko te, których jest właścicielem, dla ADMINAi MANAGER wszystkie

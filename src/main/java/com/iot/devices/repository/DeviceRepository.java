@@ -10,5 +10,5 @@ import java.util.List;
 @Repository
 public interface DeviceRepository extends JpaRepository<Device, Long> {
 
-    List<Device> findAllByOwner(User owner);
+    List<Device> findAllByOwnerOrderByCreationTimeAsc(User owner);
 }

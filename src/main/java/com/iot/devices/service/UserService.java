@@ -1,12 +1,13 @@
 package com.iot.devices.service;
 
-import com.iot.devices.dto.DeviceDto;
 import com.iot.devices.dto.UserDto;
+import com.iot.devices.entity.Device;
 import com.iot.devices.entity.User;
 import com.iot.devices.enums.UserRole;
 import com.iot.devices.exceptions.ObjectAlreadyExistException;
 import com.iot.devices.exceptions.ObjectNotFoundException;
 import com.iot.devices.exceptions.RequiredDataNotFoundException;
+import com.iot.devices.repository.DeviceRepository;
 import com.iot.devices.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final DeviceRepository deviceRepository;
 
     public List<UserDto> getAllUsers() {
         return userRepository.findAll().stream().map(UserDto::fromEntity).collect(Collectors.toList());
@@ -41,14 +43,14 @@ public class UserService {
 
     public String getUserRole(HttpServletRequest requestHeader) {
         User user = getUserByAuthorization(requestHeader);
-        if(user != null) {
+        if (user != null) {
             return user.getRole().toString();
         }
         return null;
     }
 
     public UserDto registerUser(UserDto userDto) throws Exception {
-        if(!validateUser(userDto)) {
+        if (!validateUser(userDto)) {
             log.error("UserDto has wrong data: {}", userDto);
             throw new RequiredDataNotFoundException("UserDto has wrong data");
         }
@@ -77,7 +79,10 @@ public class UserService {
     }
 
     public void deleteUser(Long id) throws Exception {
-        try{
+        try {
+            User user = userRepository.findById(id).orElse(null);
+            List<Device> devices = deviceRepository.findAllByOwnerOrderByCreationTimeAsc(user);
+            deviceRepository.deleteAll(devices);
             userRepository.deleteById(id);
         } catch (Exception exception) {
             log.error("User with given id: {} does not exist", id);
@@ -86,28 +91,28 @@ public class UserService {
     }
 
     public UserDto updateUser(Long id, UserDto userDto) throws ObjectNotFoundException {
-        try{
+        try {
             User user = userRepository.getById(id);
             boolean mod = false;
-            if(StringUtils.hasText(userDto.getName())) {
+            if (StringUtils.hasText(userDto.getName())) {
                 mod = true;
                 user.setName(userDto.getName());
             }
-            if(StringUtils.hasText(userDto.getSurname())){
+            if (StringUtils.hasText(userDto.getSurname())) {
                 mod = true;
                 user.setSurname(userDto.getSurname());
             }
 
-            if(StringUtils.hasText(userDto.getLogin())){
+            if (StringUtils.hasText(userDto.getLogin())) {
                 mod = true;
                 user.setLogin(userDto.getLogin());
             }
 
-            if(StringUtils.hasText(userDto.getPassword())){
+            if (StringUtils.hasText(userDto.getPassword())) {
                 mod = true;
                 user.setPassword(userDto.getPassword());
             }
-            if(mod) {
+            if (mod) {
                 userRepository.save(user);
             }
             return UserDto.fromEntity(user);

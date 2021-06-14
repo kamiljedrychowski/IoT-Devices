@@ -5,7 +5,6 @@ import com.iot.devices.entity.Device;
 import com.iot.devices.entity.User;
 import com.iot.devices.entity.kafka.DeviceCommandMessage;
 import com.iot.devices.enums.DeviceStatus;
-import com.iot.devices.enums.DeviceType;
 import com.iot.devices.enums.UserRole;
 import com.iot.devices.exceptions.ObjectNotFoundException;
 import com.iot.devices.exceptions.ObjectSavingException;
@@ -14,6 +13,7 @@ import com.iot.devices.exceptions.UnauthorizedAccessException;
 import com.iot.devices.repository.DeviceRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -54,9 +54,10 @@ public class DeviceService {
         }
 
         if (UserRole.getPrivilegedRoles().contains(user.getRole())) {
-            return deviceRepository.findAll().stream().map(DeviceDto::fromEntity).collect(Collectors.toList());
+            return deviceRepository.findAll(Sort.by(Sort.Direction.ASC, "creationTime")).stream().map(DeviceDto::fromEntity).collect(Collectors.toList());
+
         }
-        return deviceRepository.findAllByOwner(user).stream().map(DeviceDto::fromEntity).collect(Collectors.toList());
+        return deviceRepository.findAllByOwnerOrderByCreationTimeAsc(user).stream().map(DeviceDto::fromEntity).collect(Collectors.toList());
     }
 
     public DeviceDto changeDeviceStatus(Long deviceId, DeviceStatus newStatus) throws ObjectNotFoundException {
@@ -105,7 +106,7 @@ public class DeviceService {
 
         User owner = userService.getUserByLogin(deviceDto.getOwnerLogin());
 
-        if(owner == null) {
+        if (owner == null) {
             log.error("Owner with this login does not exist");
             throw new ObjectNotFoundException("Owner with this login does not exist");
         }
@@ -125,7 +126,7 @@ public class DeviceService {
     }
 
     public void deleteDevice(Long id) throws Exception {
-        try{
+        try {
             deviceRepository.deleteById(id);
         } catch (Exception exception) {
             log.error("Device with given id: {} does not exist", id);
@@ -137,24 +138,24 @@ public class DeviceService {
         try {
             Device device = deviceRepository.getById(id);
             boolean mod = false;
-            if(StringUtils.hasText(deviceDto.getName())) {
+            if (StringUtils.hasText(deviceDto.getName())) {
                 mod = true;
                 device.setName(deviceDto.getName());
             }
-            if(deviceDto.getType() != null) {
+            if (deviceDto.getType() != null) {
                 mod = true;
                 device.setType(deviceDto.getType());
             }
-            if(StringUtils.hasText(deviceDto.getOwnerLogin())) {
+            if (StringUtils.hasText(deviceDto.getOwnerLogin())) {
                 User owner = userService.getUserByLogin(deviceDto.getOwnerLogin());
-                if(owner == null) {
+                if (owner == null) {
                     log.error("Owner with this login does not exist");
                     throw new ObjectNotFoundException("Owner with this login does not exist");
                 }
                 mod = true;
                 device.setOwner(owner);
             }
-            if(mod) {
+            if (mod) {
                 deviceRepository.save(device);
             }
             return DeviceDto.fromEntity(device);
