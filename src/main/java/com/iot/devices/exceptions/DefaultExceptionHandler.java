@@ -15,7 +15,7 @@ public class DefaultExceptionHandler {
         //handling ObjectAlreadyExistException
         log.error(exception.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(new ExceptionResponse(
-                HttpStatus.NOT_FOUND.value(), exception.getMessage()));
+                HttpStatus.CONFLICT.value(), exception.getMessage()));
     }
 
     @ExceptionHandler(ObjectNotFoundException.class)

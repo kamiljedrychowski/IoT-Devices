@@ -22,7 +22,6 @@ public class DeviceController {
 
     @RequestMapping(method = RequestMethod.GET)
     public List<DeviceDto> getAllDevices(HttpServletRequest requestHeader) throws UnauthorizedAccessException {
-
         return deviceService.getAllDevices(requestHeader);
     }
 

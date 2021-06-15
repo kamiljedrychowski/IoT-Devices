@@ -9,6 +9,12 @@
 Aby uruchomić testy backendu, można uruchomić taska test z gradle lub zaimportować projekt w IDE 
 np Intellij i uruchomić testy znajdujące się w src/test
 
+Dodatkowo, aby autoryzować się należy wykorzystać następujące dane:
+ADMIN login: "admin" hasło: "admin"
+MANAGER login: "manager" hasło: "manager"
+USER login: "user" hasło: "user"
+
+
 
 #Przykładowy sposób na uruchomienie frontendu projektu
 - Wejść w folder react

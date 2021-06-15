@@ -34,7 +34,7 @@ class DeviceServiceTest {
                 .name("name")
                 .status(DeviceStatus.OFF)
                 .type(DeviceType.THERMOMETER)
-                .ownerLogin("kamil")
+                .ownerLogin("user")
                 .build();
         assertEquals(deviceService.addDevice(deviceDto).getName(), deviceDto.getName(),
                 "Saved device should have same name as deviceDto");
